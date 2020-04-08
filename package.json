@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "PORT=3000 node server.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "Thanish Nizam <mnmtanish@gmail.com> (https://thanish.me/)",
