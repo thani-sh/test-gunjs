@@ -1,0 +1,16 @@
+{
+  "name": "test-gunjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "PORT=3000 node server.js"
+  },
+  "keywords": [],
+  "author": "Thanish Nizam <mnmtanish@gmail.com> (https://thanish.me/)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "gun": "^0.2020.401"
+  }
+}
