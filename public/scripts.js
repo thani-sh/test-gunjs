@@ -21,14 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
             [user]: { x: 0, y: 0, el: createPoint(user) },
         };
 
-        const gun = Gun(['http://localhost:3000/gun']);
+        const gun = Gun([`${location.origin}/gun`]);
         const dam = gun.back('opt.mesh');
 
         dam.hear.GameData = (msg, peer) => {
             const { name, x, y } = msg;
             if (!data[name]) {
-                data[name] = { x, y };
-                data[name].el = createPoint(name);
+                data[name] = { x, y, el: createPoint(name) };
             } else {
                 data[name].x = x;
                 data[name].y = y;
