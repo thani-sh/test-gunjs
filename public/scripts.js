@@ -15,13 +15,27 @@ document.addEventListener('DOMContentLoaded', () => {
         elPageGame.style.display = 'block';
     }
 
-    function loadGame() {
+    function getTurnUrls() {
+        return fetch(`${location.origin}/turn`).then(res => res.json());
+    }
+
+    async function loadGame() {
+        const turn = await getTurnUrls();
         const user = elFormName.value;
         const data = {
             [user]: { x: 0, y: 0, el: createPoint(user) },
         };
 
-        const gun = Gun([`${location.origin}/gun`]);
+        const gun = Gun({
+            peers: [`${location.origin}/gun`],
+            rtc: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun.sipgate.net:3478' },
+                    turn.iceServers,
+                ]
+            },
+        });
         const dam = gun.back('opt.mesh');
 
         dam.hear.GameData = (msg, peer) => {
