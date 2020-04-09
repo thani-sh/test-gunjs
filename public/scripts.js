@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             sendPosition = (x, y) => {
                 console.log('sendPosition:', user, x, y );
-                root.on( 'out', { '@': 'X', cgx: { name: user, x, y }});
+                const id = Math.random().toString().slice(2);
+                root.on( 'out', { '#': id, cgx: { name: user, x, y }});
             };
         }
 
