@@ -36,31 +36,35 @@ document.addEventListener('DOMContentLoaded', () => {
             rtc: { iceServers: await getICEServers() },
         });
 
-        // root.on('create', function (at) {
-        //     this.to.next(at);
-        //     console.log('create:', at);
-        // });
+        let sendPosition = () => {};
 
-        // root.on('in', function (msg) {
-        //     console.log('in', msg);
-        //     if (msg.cgx) {
-        //         const { name, x, y } = msg.cgx;
-        //         updateData(name, x, y);
-        //     }
-        //     this.to.next(msg);
-        // });
-
-        const dam = root.back('opt.mesh');
-
-        dam.hear.GameData = (msg, peer) => {
-            const { name, x, y } = msg;
-            updateData(name, x, y);
-        };
-
-        function sendPosition(x, y) {
-            console.log('sendPosition:', user, x, y );
-            // root.on( 'out', { '@': 'X', cgx: { name: user, x, y }});
-            dam.say({ dam: 'GameData', name: user, x, y });
+        if (localStorage.getItem('dam')) {
+            const dam = root.back('opt.mesh');
+            dam.hear.GameData = (msg, peer) => {
+                const { name, x, y } = msg;
+                updateData(name, x, y);
+            };
+            sendPosition = (x, y) => {
+                console.log('sendPosition:', user, x, y );
+                dam.say({ dam: 'GameData', name: user, x, y });
+            };
+        } else {
+            root.on('create', function (at) {
+                this.to.next(at);
+                console.log('create:', at);
+            });
+            root.on('in', function (msg) {
+                console.log('in', msg);
+                if (msg.cgx) {
+                    const { name, x, y } = msg.cgx;
+                    updateData(name, x, y);
+                }
+                this.to.next(msg);
+            });
+            sendPosition = (x, y) => {
+                console.log('sendPosition:', user, x, y );
+                root.on( 'out', { '@': 'X', cgx: { name: user, x, y }});
+            };
         }
 
         function updateData(name, x, y) {
