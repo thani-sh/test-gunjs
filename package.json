@@ -13,5 +13,8 @@
     "express": "^4.17.1",
     "gun": "^0.2020.401",
     "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.4"
   }
 }
