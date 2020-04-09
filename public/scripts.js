@@ -15,38 +15,62 @@ document.addEventListener('DOMContentLoaded', () => {
         elPageGame.style.display = 'block';
     }
 
-    function getTurnUrls() {
-        return fetch(`${location.origin}/turn`).then(res => res.json());
+    async function getICEServers() {
+        const turnServers = await fetch(`${location.origin}/turn`)
+            .then(res => res.json());
+        return [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun.sipgate.net:3478' },
+            turnServers.iceServers,
+        ]
     }
 
     async function loadGame() {
-        const turn = await getTurnUrls();
         const user = elFormName.value;
         const data = {
             [user]: { x: 0, y: 0, el: createPoint(user) },
         };
 
-        const gun = Gun({
+        const root = Gun({
             peers: [`${location.origin}/gun`],
-            rtc: {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun.sipgate.net:3478' },
-                    turn.iceServers,
-                ]
-            },
+            rtc: { iceServers: await getICEServers() },
         });
-        const dam = gun.back('opt.mesh');
+
+        // root.on('create', function (at) {
+        //     this.to.next(at);
+        //     console.log('create:', at);
+        // });
+
+        // root.on('in', function (msg) {
+        //     console.log('in', msg);
+        //     if (msg.cgx) {
+        //         const { name, x, y } = msg.cgx;
+        //         updateData(name, x, y);
+        //     }
+        //     this.to.next(msg);
+        // });
+
+        const dam = root.back('opt.mesh');
 
         dam.hear.GameData = (msg, peer) => {
             const { name, x, y } = msg;
+            updateData(name, x, y);
+        };
+
+        function sendPosition(x, y) {
+            console.log('sendPosition:', user, x, y );
+            // root.on( 'out', { '@': 'X', cgx: { name: user, x, y }});
+            dam.say({ dam: 'GameData', name: user, x, y });
+        }
+
+        function updateData(name, x, y) {
             if (!data[name]) {
                 data[name] = { x, y, el: createPoint(name) };
             } else {
                 data[name].x = x;
                 data[name].y = y;
             }
-        };
+        }
 
         function createPoint(name) {
             const point = document.createElement('div');
@@ -66,20 +90,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.style.top = `${y}px`;
             }
         }
-
         function schedule() {
             requestAnimationFrame(() => {
                 render();
                 schedule();
             });
         }
-
         schedule();
 
         elPageGame.addEventListener('mousemove', e => {
             data[user].x = e.x;
             data[user].y = e.y;
-            dam.say({ dam: 'GameData', name: user, x: e.x, y: e.y })
+            sendPosition(e.x, e.y);
         });
     }
 });
