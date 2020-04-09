@@ -45,16 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateData(name, x, y);
             };
             sendPosition = (x, y) => {
-                console.log('sendPosition:', user, x, y );
                 dam.say({ dam: 'GameData', name: user, x, y });
             };
         } else {
-            root.on('create', function (at) {
-                this.to.next(at);
-                console.log('create:', at);
-            });
             root.on('in', function (msg) {
-                console.log('in', msg);
                 if (msg.cgx) {
                     const { name, x, y } = msg.cgx;
                     updateData(name, x, y);
@@ -62,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.to.next(msg);
             });
             sendPosition = (x, y) => {
-                console.log('sendPosition:', user, x, y );
                 const id = Math.random().toString().slice(2);
                 root.on( 'out', { '#': id, cgx: { name: user, x, y }});
             };
