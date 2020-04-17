@@ -7,9 +7,6 @@ const fetch = require('node-fetch');
 module.exports = function create(config) {
     const router = express.Router();
 
-    // NOTE: time is in seconds
-    const TURN_EXPIRE = 60 * 10;
-
     async function getDefaultIce() {
         return {
             iceServers: { urls: 'stun:stun.l.google.com:19302' },
@@ -25,12 +22,12 @@ module.exports = function create(config) {
 
     let cachedIce = { time: 0, data: null };
     async function getXirsysIce() {
-        if ( Date.now() < cachedIce.time + TURN_EXPIRE * 1000 / 2 ) {
+        if ( Date.now() <= cachedIce.time + config.TURN_EXPIRE * 1000 / 2 ) {
             return cachedIce.data;
         }
         const content = JSON.stringify({
             format: 'urls',
-            expire: Math.floor(TURN_EXPIRE),
+            expire: config.TURN_EXPIRE,
         });
         const headers = { 'Content-Type': 'application/json' };
         const options = { method: 'PUT', body: content, headers };
