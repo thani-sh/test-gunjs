@@ -13,30 +13,13 @@ module.exports = function create(config) {
         };
     }
 
-    function hasTurnServers(iceServers) {
-        if (!Array.isArray(iceServers.urls)) {
-            return false;
-        }
-        return !!iceServers.urls.find(url => url.startsWith('turn:'));
-    }
-
-    let cachedIce = { time: 0, data: null };
     async function getXirsysIce() {
-        if ( Date.now() <= cachedIce.time + config.TURN_EXPIRE * 1000 / 2 ) {
-            return cachedIce.data;
-        }
-        const content = JSON.stringify({
-            format: 'urls',
-            expire: config.TURN_EXPIRE,
-        });
+        const content = JSON.stringify({ format: 'urls' });
         const headers = { 'Content-Type': 'application/json' };
         const options = { method: 'PUT', body: content, headers };
         const data = await fetch(config.XIRSYS_URL, options)
             .then(res => res.json());
-        if (hasTurnServers(data.v.iceServers)) {
-            cachedIce = { time: Date.now(), data: data.v };
-        }
-        return cachedIce.data;
+        return data.v;
     }
 
     router.get('/', async (req, res) => {
