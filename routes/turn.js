@@ -10,6 +10,13 @@ async function getDefaultIce() {
     };
 }
 
+function hasTurnServers(iceServers) {
+    if (!Array.isArray(iceServers.urls)) {
+        return false;
+    }
+    return !!iceServers.urls.find(url => url.startsWith('turn:'));
+}
+
 let cachedIce = { time: 0, data: null };
 async function getXirsysIce() {
     if ( Date.now() < cachedIce.time + TURN_EXPIRE * 1000 ) {
@@ -23,7 +30,9 @@ async function getXirsysIce() {
     const options = { method: 'PUT', body: content, headers };
     const data = await fetch(config.XIRSYS_URL, options)
         .then(res => res.json());
-    cachedIce = { time: Date.now(), data: data.v };
+    if (hasTurnServers(data.v.iceServers)) {
+        cachedIce = { time: Date.now(), data: data.v };
+    }
     return cachedIce.data;
 }
 
