@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    if (location.pathname === '/') {
+        location.pathname = '/game/default';
+        return;
+    }
+
     const elPageUser = document.getElementById('page-user');
     const elFormUser = document.getElementById('form-user');
     const elFormName = document.getElementById('form-user-name');
@@ -16,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = elFormName.value;
         e.preventDefault();
         localStorage.setItem('user', user);
+        elPageUser.style.display = 'none';
         elPageGame.style.display = 'flex';
         loadGame(user);
     });
@@ -36,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const root = Gun({
-            peers: [`${location.origin}/gun`],
+            peers: [ `${location.href}/ws` ],
             rtc: { iceServers: await getICEServers() },
         });
 

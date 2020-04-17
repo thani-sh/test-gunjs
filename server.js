@@ -1,21 +1,15 @@
 const express = require('express');
-const fetch = require('node-fetch');
-const gun = require('gun');
+const routeTurn = require('./routes/turn');
+const routeGame = require('./routes/game');
 
 const XIRSYS_URL = process.env.XIRSYS_URL;
+const CONST_PEER = process.env.CONST_PEER;
+const PORT = process.env.PORT || 3000;
 
+// configure express
 const app = express();
-
-app.use(gun.serve);
+require('express-ws')(app);
+app.use('/turn', routeTurn({ XIRSYS_URL }));
+app.use('/game', routeGame({ CONST_PEER }));
 app.use(express.static('public'));
-
-app.get('/turn', async function(req, res) {
-    const content = JSON.stringify({ format: 'urls' });
-    const headers = { 'Content-Type': 'application/json' };
-    const _res = await fetch(XIRSYS_URL, { method: 'PUT', body: content, headers });
-    const data = await _res.json();
-    res.json(data.v);
-});
-
-const server = app.listen(process.env.PORT || 3000);
-const {} = gun({ file: 'data', web: server });
+app.listen(PORT);

@@ -987,7 +987,7 @@
 		if(typeof window !== "undefined"){ (window.GUN = window.Gun = Gun).window = window }
 		try{ if(typeof MODULE !== "undefined"){ MODULE.exports = Gun } }catch(e){}
 		module.exports = Gun;
-		
+
 		(Gun.window||'').console = (Gun.window||'').console || {log: function(){}};
 		(C = console).only = function(i, s){ return (C.only.i && i === C.only.i && C.only.i++) && (C.log.apply(C, arguments) || s) };
 
@@ -2314,7 +2314,7 @@
 			});
 
 			root.on('bye', function(peer, tmp){
-				peer = opt.peers[peer.id || peer] || peer; 
+				peer = opt.peers[peer.id || peer] || peer;
 				this.to.next(peer);
 				peer.bye? peer.bye() : (tmp = peer.wire) && tmp.close && tmp.close();
 				Type.obj.del(opt.peers, peer.id);
