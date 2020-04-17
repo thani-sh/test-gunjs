@@ -6,7 +6,7 @@ body, html {
 }
 
 .page {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -28,11 +28,15 @@ label {
 
 .point {
     position: absolute;
+    top: 0;
+    left: 0;
     margin: -5px 0 0 -5px;
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgb(100, 100, 100);
+    z-index: 1;
+    will-change: transform;
 }
 
 .point-text {
