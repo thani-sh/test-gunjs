@@ -2,7 +2,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 
 // NOTE: time is in seconds
-const TURN_EXPIRE = 60 * 5;
+const TURN_EXPIRE = 60 * 10;
 
 async function getDefaultIce() {
     return {
@@ -19,12 +19,12 @@ function hasTurnServers(iceServers) {
 
 let cachedIce = { time: 0, data: null };
 async function getXirsysIce() {
-    if ( Date.now() < cachedIce.time + TURN_EXPIRE * 1000 ) {
+    if ( Date.now() < cachedIce.time + TURN_EXPIRE * 1000 / 2 ) {
         return cachedIce.data;
     }
     const content = JSON.stringify({
         format: 'urls',
-        expire: Math.floor(TURN_EXPIRE * 0.8),
+        expire: Math.floor(TURN_EXPIRE),
     });
     const headers = { 'Content-Type': 'application/json' };
     const options = { method: 'PUT', body: content, headers };
