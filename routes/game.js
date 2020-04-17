@@ -29,7 +29,7 @@ module.exports = function create(config) {
 
     function createPeer(game, ws) {
         const peer = {
-            id: ++game._next,
+            id: String(++game._next),
             ws,
         };
         game.peers[peer.id] = peer;
@@ -66,8 +66,10 @@ module.exports = function create(config) {
             console.info(`# ${game.id}/${peer.id}: pass:`, msg);
             for (const [ key, val ] of Object.entries(game.peers)) {
                 if (key === peer.id) {
+                    console.info(`# ${game.id}/${key}: skip:`, msg);
                     continue;
                 }
+                console.info(`# ${game.id}/${key}: send:`, msg);
                 val.ws.send(msg);
             }
         });
