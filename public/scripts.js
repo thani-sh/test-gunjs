@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const root = Gun({
       peers: [`${location.origin}/gun`],
       rtc: { iceServers: await getICEServers() },
+      ...( localStorage.getItem('nols') ? { localStorage: false } : {}),
     });
 
     // console.debug(`# ${game}/${user}: subscribe`);
