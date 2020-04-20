@@ -54,9 +54,22 @@ document.addEventListener("DOMContentLoaded", () => {
       updateData(name, pos.x, pos.y);
     }, true);
 
+    const RAND_LENGTH = 1024;
+    const RAND_BASE62 = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split( '' );
+    const RAND_BUFFER = new Uint8Array( RAND_LENGTH );
+    function generateRandom() {
+      const bytes = crypto.getRandomValues( RAND_BUFFER );
+      const chars = [];
+      for ( let i = 0; i < RAND_LENGTH; ++i ) {
+          chars[i] = RAND_BASE62[bytes[i] % 62];
+      }
+      return chars.join( '' );
+    }
+
     function sendPosition(x, y) {
       // console.debug(`# ${game}/${user}: send: ${x},${y}`);
-      root.get(game).get(user).put({ x, y });
+      const r = generateRandom();
+      root.get(game).get(user).put({ x, y, r });
     }
 
     function updateData(name, x, y) {
