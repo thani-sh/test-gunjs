@@ -38,26 +38,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadGame(user) {
+    const game = location.href.split('/').pop();
     const data = {
       [user]: { x: -50, y: -50, el: createPoint(user) },
     };
 
     const root = Gun({
-      peers: [`${location.href}/ws`],
+      peers: [`${location.origin}/gun`],
       rtc: { iceServers: await getICEServers() },
     });
 
-    root.on("in", function (msg) {
-      if (msg.cgx) {
-        const { name, x, y } = msg.cgx;
-        updateData(name, x, y);
-      }
-      this.to.next(msg);
-    });
+    // console.debug(`# ${game}/${user}: subscribe`);
+    root.get(game).map().on((pos, name) => {
+      // console.debug(`# ${game}/${name}: recv: ${pos}`);
+      updateData(name, pos.x, pos.y);
+    }, true);
 
     function sendPosition(x, y) {
-      const id = Math.random().toString().slice(2);
-      root.on("out", { "#": id, cgx: { name: user, x, y } });
+      // console.debug(`# ${game}/${user}: send: ${x},${y}`);
+      root.get(game).get(user).put({ x, y });
     }
 
     function updateData(name, x, y) {

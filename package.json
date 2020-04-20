@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "prettier --write server.js routes/*.js public/*.*"
   },
   "keywords": [],
   "author": "Thanish Nizam <mnmtanish@gmail.com> (https://thanish.me/)",
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "express-ws": "^4.0.0",
     "gun": "^0.2020.401",
     "node-fetch": "^2.6.0"
   },

@@ -1,15 +1,17 @@
 const express = require("express");
+const Gun = require("gun");
 const routeTurn = require("./routes/turn");
 const routeGame = require("./routes/game");
 
 const XIRSYS_URL = process.env.XIRSYS_URL;
-const CONST_PEER = process.env.CONST_PEER;
 const PORT = process.env.PORT || 3000;
 
 // configure express
 const app = express();
-require("express-ws")(app);
+app.use(Gun.serve);
+app.use(express.static(__dirname));
 app.use("/turn", routeTurn({ XIRSYS_URL }));
-app.use("/game", routeGame({ CONST_PEER }));
+app.use("/game", routeGame({}));
 app.use(express.static("public"));
-app.listen(PORT);
+const web = app.listen(PORT);
+const gun = Gun({ web });
